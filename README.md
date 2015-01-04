@@ -3,12 +3,12 @@ kuznechik
 
 04-Jan-15  Markku-Juhani O. Saarinen <mjos@iki.fi>
 
-A simple implementation of the proposed Russian block cipher standard, Kuznechik ("Grasshopper"). 128-bit block size, 256-bit key. Matches with the test vectors found in the standard.
+A simple, totally unoptimized implementation of the proposed Russian block cipher standard, Kuznechik ("Grasshopper"). 128-bit block size, 256-bit key. Matches with the test vectors found in the standard.
 
 A preliminary spec has been around for a year or two, and I met with few of the authors in Moscow in June '14 (CTCryt '14). The doc subdirectory has some documetation: the current Russian spec, Eric Filiol's translation, and 
 the version presented at CTCrypt '14. Eric Filiol also has a 
 [blog entry on this cipher](http://cvo-lab.blogspot.fi/2015/01/the-new-gost-standard-from-russian.html)
- (although his is implementation is pretty horrible with code in header files etc). 
+ (although his implementation is pretty horrible -- with code in header files etc). 
 
 There are straight-forward ways to optimize this by transforming the linear transform into a simple lookup.
 Will include an optimized version later.
