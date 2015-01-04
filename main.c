@@ -8,6 +8,10 @@
 
 int main(int argc, char **argv)
 {	
+	// These are here in Big Endian format, as that seems to be the favored
+	// way of representing things. However, it is open if we will have to
+	// flip byte order for the final version or not.
+	
 	const uint8_t testvec_key[32] = {
 		0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 
 		0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 
@@ -45,7 +49,7 @@ int main(int argc, char **argv)
 
 	for (i = 0; i < 16; i++) {
 		if(testvec_ct[i] != x.b[15 - i]) {
-			fprintf(stderr, "Encryption fail with kuz_enc_8bit().\n");
+			fprintf(stderr, "Encryption fail with kuz_enc().\n");
 			return -1;
 		}
 	}
@@ -56,7 +60,7 @@ int main(int argc, char **argv)
 	
 		for (i = 0; i < 16; i++) {
 		if(testvec_pt[i] != x.b[15 - i]) {
-			fprintf(stderr, "Decryption fail with kuz_dec_8bit().\n");
+			fprintf(stderr, "Decryption fail with kuz_dec().\n");
 			return -2;
 		}
 	}
