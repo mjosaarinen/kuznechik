@@ -1,7 +1,7 @@
 kuznechik
 =========
 
-04-Jan-14  Markku-Juhani O. Saarinen <mjos@iki.fi>
+04-Jan-15  Markku-Juhani O. Saarinen <mjos@iki.fi>
 
 A simple implementation of the proposed Russian block cipher standard, Kuznechik ("Grasshopper"). 128-bit block size, 256-bit key. Matches with the test vectors found in the standard.
 
