@@ -84,8 +84,8 @@ const uint8_t kuz_pi_inv[0x100] = {
 // Linear vector from sect 5.1.2
 
 const static uint8_t kuz_lvec[16] = {
-	0x01, 0x94, 0x20, 0x85, 0x10, 0xC2, 0xC0, 0x01,
-	0xFB, 0x01, 0xC0, 0xC2, 0x10, 0x85, 0x20, 0x94 
+	0x94, 0x20, 0x85, 0x10, 0xC2, 0xC0, 0x01, 0xFB, 
+	0x01, 0xC0, 0xC2, 0x10, 0x85, 0x20, 0x94, 0x01
 };
 
 // poly multiplication mod p(x) = x^8 + x^7 + x^6 + x + 1
@@ -107,7 +107,7 @@ static uint8_t kuz_mul_gf256(uint8_t x, uint8_t y)
 
 // (slow) linear operation l
 
-static void kuz_l(w128_t *w)
+void kuz_l(w128_t *w)
 {
 	int i, j;
 	uint8_t x;
@@ -116,12 +116,14 @@ static void kuz_l(w128_t *w)
 	for (j = 0; j < 16; j++) {
 
 		// An LFSR with 16 elements from GF(2^8)
-		x = w->b[0];	// since lvec[0] = 1
-		for (i = 1; i < 16; i++) {
-			w->b[i - 1] = w->b[i];
+		x = w->b[15];	// since lvec[15] = 1
+
+		for (i = 14; i >= 0; i--) {
+			w->b[i + 1] = w->b[i];
 			x ^= kuz_mul_gf256(w->b[i], kuz_lvec[i]);
-		}	
-		w->b[15] = x;
+		}
+		
+		w->b[0] = x;
 	}
 }
 
@@ -135,12 +137,12 @@ static void kuz_l_inv(w128_t *w)
 	// 16 rounds	
 	for (j = 0; j < 16; j++) {
 
-		x = w->b[15];
-		for (i = 15; i > 0; i--) {
-			w->b[i] = w->b[i - 1];	
+		x = w->b[0];
+		for (i = 0; i < 15; i++) {
+			w->b[i] = w->b[i + 1];	
 			x ^= kuz_mul_gf256(w->b[i], kuz_lvec[i]);
 		}
-		w->b[0] = x;
+		w->b[15] = x;
 	}
 }
 
@@ -153,8 +155,8 @@ void kuz_key(kuz_ctx *kuz, const uint8_t key[32])
 		
 	for (i = 0; i < 16; i++) {
 		// this will be have to changed for little-endian systems
-		x.b[i] = key[15 - i];
-		y.b[i] = key[31 - i];
+		x.b[i] = key[i];
+		y.b[i] = key[i + 16];
 	}
 
 	kuz->k[0].q[1] = x.q[1];
@@ -166,7 +168,8 @@ void kuz_key(kuz_ctx *kuz, const uint8_t key[32])
 
 		// C Value
 		c.q[1] = 0;
-		c.q[0] = i;
+		c.q[0] = 0;
+		c.b[15] = i;
 		kuz_l(&c);
 		
 		z.q[1] = x.q[1] ^ c.q[1];

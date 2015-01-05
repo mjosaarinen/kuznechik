@@ -6,6 +6,19 @@
 #include <stdio.h>
 #include "kuznechik.h"
 
+// debug print
+
+void print_w128(w128_t *x)
+{
+	int i;
+	
+	for (i = 0; i < 16; i++)
+		printf("%02X", x->b[i]);
+	printf("\n");
+}
+
+// stub main
+
 int main(int argc, char **argv)
 {	
 	// These are here in Big Endian format, as that seems to be the favored
@@ -34,21 +47,23 @@ int main(int argc, char **argv)
 	kuz_key(&ctx, testvec_key);
 	
 	for (i = 0; i < 10; i++) {	
-		printf("K_%d\t= %016lX%016lX\n", 
-			i + 1, ctx.k[i].q[1], ctx.k[i].q[0]);
+		printf("K_%d\t= ", i + 1);
+		print_w128(&ctx.k[i]);
 	}
 
 	for (i = 0; i < 16; i++)
-		x.b[i] = testvec_pt[15 - i];
+		x.b[i] = testvec_pt[i];
 
-	printf("PT\t= %016lX%016lX\n", x.q[1], x.q[0]);
+	printf("PT\t= ");
+	print_w128(&x);
 
 	kuz_enc(&ctx, &x);
 
-	printf("CT\t= %016lX%016lX\n", x.q[1], x.q[0]);
+	printf("CT\t= ");
+	print_w128(&x);
 
 	for (i = 0; i < 16; i++) {
-		if(testvec_ct[i] != x.b[15 - i]) {
+		if (testvec_ct[i] != x.b[i]) {
 			fprintf(stderr, "Encryption fail with kuz_enc().\n");
 			return -1;
 		}
@@ -56,10 +71,12 @@ int main(int argc, char **argv)
 
 	kuz_dec(&ctx, &x);
 
-	printf("PT\t= %016lX%016lX\n", x.q[1], x.q[0]);
+	printf("PT\t= ");
+	print_w128(&x);
 	
-		for (i = 0; i < 16; i++) {
-		if(testvec_pt[i] != x.b[15 - i]) {
+	
+	for (i = 0; i < 16; i++) {
+		if (testvec_pt[i] != x.b[i]) {
 			fprintf(stderr, "Decryption fail with kuz_dec().\n");
 			return -2;
 		}
