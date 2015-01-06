@@ -2,7 +2,7 @@
 // 04-Jan-15  Markku-Juhani O. Saarinen <mjos@iki.fi>
 
 // This is the basic non-optimized 8-bit "readble" version of the cipher.
-// Conforms to incuded doc/GOSTR-bsh.pdf file, which has an internal
+// Conforms to included doc/GOSTR-bsh.pdf file, which has an internal
 // date of September 2, 2014.
 
 #include "kuznechik.h"

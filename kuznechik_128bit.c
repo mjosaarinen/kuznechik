@@ -3,7 +3,7 @@
 
 // Basic 128-bit version without platform - specific optimizations
 
-// Conforms to incuded doc/GOSTR-bsh.pdf file, which has an internal
+// Conforms to included doc/GOSTR-bsh.pdf file, which has an internal
 // date of September 2, 2014.
 
 #include "kuznechik.h"
