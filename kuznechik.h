@@ -7,7 +7,7 @@
 #include <stdint.h>
 
 // my 128-bit datatype
-typedef union {
+typedef union {	
     uint64_t q[2];
     uint8_t  b[16];
 } w128_t;
@@ -15,12 +15,17 @@ typedef union {
 // cipher context
 typedef struct {
 	w128_t k[10];		// round keys
-} kuz_ctx;
+} kuz_key_t;
 
-// basic ECB interface
+// init lookup tables
+void kuz_init();
 
-void kuz_key(kuz_ctx *kuz, const uint8_t key[32]);	// key setup
-void kuz_enc(kuz_ctx *kuz, w128_t *x);				// encrypt a block
-void kuz_dec(kuz_ctx *kuz, w128_t *x);				// decrypt a block
+// key setup
+void kuz_set_encrypt_key(kuz_key_t *subkeys, const uint8_t key[32]);	
+void kuz_set_decrypt_key(kuz_key_t *subkeys, const uint8_t key[32]);	
+
+// single-block ecp ops
+void kuz_encrypt_block(kuz_key_t *subkeys, void *x);
+void kuz_decrypt_block(kuz_key_t *subkeys, void *x);
 
 #endif

@@ -3,7 +3,9 @@
 
 BIN	= xtest
 OBJS	= main.o \
-	kuznechik_simple.o
+	kuznechik_128bit.o
+#	kuznechik_8bit.o
+
 DIST	= kuznechik
 
 CC	= gcc

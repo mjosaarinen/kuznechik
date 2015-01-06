@@ -4,20 +4,23 @@
 // main() for testing
 
 #include <stdio.h>
+#include <time.h>
 #include "kuznechik.h"
 
-// debug print
+// debug print state
 
 void print_w128(w128_t *x)
 {
 	int i;
 	
 	for (i = 0; i < 16; i++)
-		printf("%02X", x->b[i]);
+		printf(" %02X", x->b[i]);
 	printf("\n");
 }
 
 // stub main
+
+void kuz_init();
 
 int main(int argc, char **argv)
 {	
@@ -40,26 +43,29 @@ int main(int argc, char **argv)
 		0x5A, 0x46, 0x8D, 0x42, 0xB9, 0xD4, 0xED, 0xCD
 	};
 	
-	int i;
-	kuz_ctx ctx;
+	int i, j, n;
+	kuz_key_t key;
 	w128_t x;
-		
-	kuz_key(&ctx, testvec_key);
-	
+	uint32_t buf[0x100];
+	clock_t tim;
+
+	printf("Self-test:\n");
+	kuz_init();
+			
+	kuz_set_encrypt_key(&key, testvec_key);	
 	for (i = 0; i < 10; i++) {	
-		printf("K_%d\t= ", i + 1);
-		print_w128(&ctx.k[i]);
+		printf("K_%d\t=", i + 1);
+		print_w128(&key.k[i]);
 	}
 
 	for (i = 0; i < 16; i++)
 		x.b[i] = testvec_pt[i];
-
-	printf("PT\t= ");
+	printf("PT\t=");
 	print_w128(&x);
 
-	kuz_enc(&ctx, &x);
+	kuz_encrypt_block(&key, &x);
 
-	printf("CT\t= ");
+	printf("CT\t=");
 	print_w128(&x);
 
 	for (i = 0; i < 16; i++) {
@@ -69,11 +75,11 @@ int main(int argc, char **argv)
 		}
 	}
 
-	kuz_dec(&ctx, &x);
+	kuz_set_decrypt_key(&key, testvec_key);
+	kuz_decrypt_block(&key, &x);
 
-	printf("PT\t= ");
+	printf("PT\t=");
 	print_w128(&x);
-	
 	
 	for (i = 0; i < 16; i++) {
 		if (testvec_pt[i] != x.b[i]) {
@@ -82,7 +88,47 @@ int main(int argc, char **argv)
 		}
 	}
 	
-	printf("OK!\n");
+	printf("Self-test OK!\n");
+	
+	// == Speed Test ==
+	
+	for (i = 0; i < 0x100; i++)
+		buf[i] = i;
+	kuz_set_encrypt_key(&key, testvec_key);	
+
+	for (n = 100, tim = 0; tim < 2 * CLOCKS_PER_SEC; n <<= 1) {
+		tim = clock();
+		for (j = 0; j < n; j++) {
+			for (i = 0; i < 0x100; i += 4)
+				kuz_encrypt_block(&key, &buf[i]);
+		}
+		tim = clock() - tim;
+		printf("kuz_encrypt_block(): %.3f kB/s (n=%dkB,t=%.3fs)\r",
+			((double) CLOCKS_PER_SEC * n) / ((double) tim), 
+			n, ((double) tim) / ((double) CLOCKS_PER_SEC));
+		fflush(stdout);
+	}
+	printf("\n");
+	
+	
+	for (i = 0; i < 0x100; i++)
+	buf[i] = i;
+	kuz_set_decrypt_key(&key, testvec_key);	
+
+	for (n = 100, tim = 0; tim < 2 * CLOCKS_PER_SEC; n <<= 1) {
+		tim = clock();
+		for (j = 0; j < n; j++) {
+			for (i = 0; i < 0x100; i += 4)
+				kuz_decrypt_block(&key, &buf[i]);
+		}
+		tim = clock() - tim;
+		printf("kuz_decrypt_block(): %.3f kB/s (n=%dkB,t=%.3fs)\r",
+			((double) CLOCKS_PER_SEC * n) / ((double) tim), 
+			n, ((double) tim) / ((double) CLOCKS_PER_SEC));
+		fflush(stdout);
+	}
+	printf("\n");
+	
 	
 	return 0;
 }
