@@ -10,7 +10,7 @@ the version presented at CTCrypt '14. Eric Filiol also has a
 [blog entry on this cipher](http://cvo-lab.blogspot.fi/2015/01/the-new-gost-standard-from-russian.html)
  (although his implementation is pretty horrible -- with code in header files etc). 
 
-This package includes two versions; a really siple 8-bit version and an table-lookup version that uses 128-bit data types and really big tables (to show that it can be done). You can choose the version you want in the Makefile; there is about a 100x difference in performance between the two versions but output is equivalent. The implementations match with the test vectors found in the standard. However I am not sure about the endianess convention used to store data on wire, so I am just guessing big endian (network byte order -- not the endianess Intel systems usually use).
+This package includes two versions; a really simple 8-bit version and a version that uses 128-bit data types and really big tables (to show that it can be done). You can choose the version you want in the Makefile; there is about a 100x difference in performance between the two versions but output is equivalent. The implementations match with the test vector found in the standard. However I am not sure about the endianess convention used to store data on wire, so I am just guessing big endian (network byte order -- not the endianess Intel systems usually use).
 
 #Compiling on Linux
 
