@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 
 	for (i = 0; i < 16; i++) {
 		if (testvec_ct[i] != x.b[i]) {
-			fprintf(stderr, "Encryption fail with kuz_enc().\n");
+			fprintf(stderr, "Encryption self-test failure.\n");
 			return -1;
 		}
 	}
@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 	
 	for (i = 0; i < 16; i++) {
 		if (testvec_pt[i] != x.b[i]) {
-			fprintf(stderr, "Decryption fail with kuz_dec().\n");
+			fprintf(stderr, "Decryption self-test failure.\n");
 			return -2;
 		}
 	}
