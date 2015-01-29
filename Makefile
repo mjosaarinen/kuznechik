@@ -21,7 +21,7 @@ $(BIN): $(OBJS)
 	$(CC) $(CFLAGS) $(INCS) -c $< -o $@
 
 clean:
-	rm -rf $(DIST)-*.txz $(OBJS) $(BIN) *~
+	rm -rf $(DIST)-*.t?z $(OBJS) $(BIN) *~
 
 dist:	clean
 	cd ..; \
